@@ -4,6 +4,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import static java.lang.System.in;
 
 public class CanvasGUI extends Canvas {
     private Point[] origPoints;
@@ -29,12 +33,21 @@ public class CanvasGUI extends Canvas {
     private Point2D.Double KP6;
     private double abweichungen;
 
+    private String lm1_x;
+    private String lm1_y;
+    private String lm2_x;
+    private String lm2_y;
+    private String lm3_x;
+    private String lm3_y;
+
     CanvasGUI() {
         logic = Logic.getInstance();
         home = new Point2D.Double(0, 0);
         LM1 = new Point2D.Double(3.5, 2);
         LM2 = new Point2D.Double(3.5, -2);
         LM3 = new Point2D.Double(0, -4);
+
+        //getInput();
 
         Point2D.Double mittelPunktTemporary = logic.mittelpunkt(home, LM1);
         M1 = new Point2D.Double(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
@@ -52,6 +65,38 @@ public class CanvasGUI extends Canvas {
         snapHome = new Snapshot(M1, M2, M3, M4, M5, M6);
 
         abweichungen = 0;
+    }
+
+    private void getInput() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        try{
+            System.out.println("LM1 x-Koordinate:");
+            lm1_x = br.readLine();
+
+            System.out.println("LM1 y-Koordinate:");
+            lm1_y = br.readLine();
+
+            System.out.println("LM2 x-Koordinate:");
+            lm2_x = br.readLine();
+
+            System.out.println("LM2 y-Koordinate:");
+            lm2_y = br.readLine();
+
+            System.out.println("LM3 x-Koordinate:");
+            lm3_x = br.readLine();
+
+            System.out.println("LM3 y-Koordinate:");
+            lm3_y = br.readLine();
+
+
+            LM1 = new Point2D.Double(Double.valueOf(lm1_x), Double.valueOf(lm1_y));
+            LM2 = new Point2D.Double(Double.valueOf(lm2_x), Double.valueOf(lm2_y));
+            LM3 = new Point2D.Double(Double.valueOf(lm3_x), Double.valueOf(lm3_y));
+        } catch (Exception e) {
+
+        }
+
+
     }
 
     @Override
