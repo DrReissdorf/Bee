@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.Color;
 
 public class GUI extends javax.swing.JFrame {
@@ -6,10 +7,13 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form GUI
      **/
     public GUI() {
-        super("Honey Beeee sum sum sum sum sum sum sum sum sum sum sum sum sum");
-        this.setLocation(300, 100);
+        super("Homing Algorithm");
+        this.setLocationRelativeTo(null);
 
         initComponents();
+
+        setResizable(false);
+        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**
@@ -22,7 +26,7 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         canvas1 = new CanvasGUI();
-        canvas1.setBackground(new Color(255, 164, 89));
+        canvas1.setBackground(new Color(255, 196, 97));
 
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

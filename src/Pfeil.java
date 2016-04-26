@@ -1,23 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
-
-/**
- * @author Kristine
- */
 public class Pfeil {
     private static Pfeil instance;
 
-    private Pfeil() {
-    }
+    private Pfeil() {}
 
     public static Pfeil getInstance() {
         if (instance == null) {
@@ -33,10 +22,10 @@ public class Pfeil {
      */
     public Point[] points(int x, int y) {
         Point[] originalpoint = new Point[6];
-        originalpoint[0] = new Point(x + 17, y + 17); // Zentrum
+        originalpoint[0] = new Point(x + 17, y + 22); // Zentrum
         originalpoint[1] = new Point(x + 17, y + 13);
         originalpoint[2] = new Point(x + 14, y + 13);
-        originalpoint[3] = new Point(x + 17, y + 10);
+        originalpoint[3] = new Point(x + 17, y + 8);
         originalpoint[4] = new Point(x + 20, y + 13);
         originalpoint[5] = new Point(x + 17, y + 13);
 
@@ -74,6 +63,4 @@ public class Pfeil {
         Polygon p = this.polygonize(rotPoints);
         return at.createTransformedShape(p);
     }
-
-
 }

@@ -1,17 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import java.awt.geom.Point2D;
-import java.util.Vector;
 
-
-/**
- * @author Kristine
- */
 public class Snapshot {
     private Point2D.Double m1, m2, m3, m4, m5, m6;
 

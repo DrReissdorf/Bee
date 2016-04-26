@@ -1,20 +1,15 @@
 import java.awt.geom.Point2D;
 
 public class Logic {
-
     private double radiusHome;
-    private double radiusLM;
     private static Logic instanz;
 
     private Logic() {
         radiusHome = 1;
-        radiusLM = 1;
     }
 
     public static Logic getInstance() {
-        if (instanz == null) {
-            instanz = new Logic();
-        }
+        if (instanz == null) instanz = new Logic();
         return instanz;
     }
 
@@ -57,7 +52,7 @@ public class Logic {
      * @param p2
      * @return gibt den Abstand zurueck
      */
-    public double getAbstand(Point2D.Double p1, Point2D.Double p2) {
+    public double getLaenge(Point2D.Double p1, Point2D.Double p2) {
         return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));
     }
 
@@ -65,12 +60,11 @@ public class Logic {
     /**
      * Berechnet den Abstand zwischen den beiden uebergebenen Vektoren
      *
-     * @param p1
-     * @param p2
+     * @param v1
      * @return gibt den Abstand zurueck
      */
-    public double getAbstand(Vector2D p1, Vector2D p2) {
-        return Math.sqrt(Math.pow((p2.getX() - p1.getX()), 2) + Math.pow((p2.getY() - p1.getY()), 2));
+    public double getLaenge(Vector2D v1) {
+        return Math.sqrt(Math.pow((v1.getX()), 2) + Math.pow((v1.getY()), 2));
     }
 
     /**
@@ -105,7 +99,7 @@ public class Logic {
      *
      * @param richtungsvektor
      * @param p1
-     * @param abstand
+     * @param laenge
      * @return
      */
     public Point2D.Double getPoint(Vector2D richtungsvektor, Point2D.Double p1, double laenge) {
@@ -173,10 +167,9 @@ public class Logic {
      * @return der Punkt der bezueglich den Punkt p0 den kleinsten Abstand hat
      */
     public Point2D.Double kleinsterAbstand(Point2D.Double p0, Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
-        double l1 = this.getAbstand(p0, p1);
-        double l2 = this.getAbstand(p0, p2);
-        double l3 = this.getAbstand(p0, p3);
-
+        double l1 = this.getLaenge(p0, p1);
+        double l2 = this.getLaenge(p0, p2);
+        double l3 = this.getLaenge(p0, p3);
 
         if (l1 < l2 && l1 < l3) {
             return p1;
@@ -189,7 +182,6 @@ public class Logic {
 
         }
         return p1;
-
     }
 
     /**
@@ -202,23 +194,29 @@ public class Logic {
      * @return gibt den Mittelpunkt einer weißen Flaeche zurueck
      */
     public Point2D.Double punktbestimmung(Point2D.Double mp, Point2D.Double kp1, Point2D.Double kp2, Point2D.Double kp3) {
-        Point2D.Double p = new Point2D.Double(((kp2.getX() - kp1.getX()) / 2) + kp1.getX(), ((kp2.getY() - kp1.getY()) / 2) + kp1.getY());
+        Point2D.Double p = new Point2D.Double( ((kp2.getX() - kp1.getX()) / 2) , ((kp2.getY() - kp1.getY()) / 2)  );
 
-        double abstand1 = Math.abs(this.getAbstand(kp1, kp2));
-        double abstand2 = Math.abs(this.getAbstand(kp2, kp3));
-        double abstand3 = Math.abs(this.getAbstand(kp1, kp3));
+        double abstand1 = Math.abs(this.getLaenge(kp1, kp2));
+        double abstand2 = Math.abs(this.getLaenge(kp2, kp3));
+        double abstand3 = Math.abs(this.getLaenge(kp3, kp1));
 
         if ((abstand1 > abstand2) && (abstand1 > abstand3)) {
-            double x = mp.getX() + (this.richtungsvektor(mp, p).getX() * (-1)) * (radiusHome / this.getAbstand(mp, p));
-            double y = mp.getY() + (this.richtungsvektor(mp, p).getY() * (-1)) * (radiusHome / this.getAbstand(mp, p));
-
+            double x = mp.getX() + (richtungsvektor(mp, p).getX() * (-1)) * (radiusHome / this.getLaenge(mp, p));
+            double y = mp.getY() + (richtungsvektor(mp, p).getY() * (-1)) * (radiusHome / this.getLaenge(mp, p));
             return new Point2D.Double(x, y);
         }
-        double x = mp.getX() + this.richtungsvektor(mp, p).getX() * (radiusHome / this.getAbstand(mp, p));
-        double y = mp.getY() + this.richtungsvektor(mp, p).getY() * (radiusHome / this.getAbstand(mp, p));
 
-
+        double x = mp.getX() + this.richtungsvektor(mp, p).getX() * (radiusHome / this.getLaenge(mp, p));
+        double y = mp.getY() + this.richtungsvektor(mp, p).getY() * (radiusHome / this.getLaenge(mp, p));
         return new Point2D.Double(x, y);
+    }
+
+    public Point2D.Double punktbestimmung(Point2D.Double mp, Point2D.Double firstPunkt, Point2D.Double scndPunkt) {
+        Vector2D vektorZwischenFirstUndScnd = richtungsvektor(scndPunkt,firstPunkt);
+        Vector2D halberVektorZwischenFistUndScnd = vektorZwischenFirstUndScnd.multiplikation(0.5);
+        Vector2D richtungsVektor = richtungsvektor(mp,new Point2D.Double(halberVektorZwischenFistUndScnd.getX(),halberVektorZwischenFistUndScnd.getY()));
+        Vector2D normVektor = normVector(richtungsVektor);
+        return new Point2D.Double(normVektor.getX(),normVektor.getY());
     }
 
     /**
@@ -229,18 +227,18 @@ public class Logic {
      * @return gibt den Abstand zwischen p0 und dem Snap mit der kuerzesten Strecke zurueck
      */
     public double vergleichStreckeWeiß(Point2D.Double p0, Snapshot snap) {
-        double l1 = this.getAbstand(p0, snap.getM4());
-        double l2 = this.getAbstand(p0, snap.getM5());
-        double l3 = this.getAbstand(p0, snap.getM6());
+        double l1 = this.getLaenge(p0, snap.getM4());
+        double l2 = this.getLaenge(p0, snap.getM5());
+        double l3 = this.getLaenge(p0, snap.getM6());
 
         if (l1 < l2) {
             if (l1 < l3) {
-                return this.getAbstand(snap.getM1(), snap.getM2());
-            } else return this.getAbstand(snap.getM1(), snap.getM3());
+                return this.getLaenge(snap.getM1(), snap.getM2());
+            } else return this.getLaenge(snap.getM1(), snap.getM3());
         } else {
             if (l2 < l3) {
-                return this.getAbstand(snap.getM2(), snap.getM3());
-            } else return this.getAbstand(snap.getM1(), snap.getM3());
+                return this.getLaenge(snap.getM2(), snap.getM3());
+            } else return this.getLaenge(snap.getM1(), snap.getM3());
         }
     }
 
@@ -253,7 +251,7 @@ public class Logic {
      * @return 1, wenn d1 größer als der Abstand der beiden uebergebenen Punkte, ansonsten -1
      */
     public int richtungDesVectors(double d1, Point2D.Double p1, Point2D.Double p2) {
-        double d2 = getAbstand(p1, p2);
+        double d2 = getLaenge(p1, p2);
         if (d1 < d2) return 1;
         return -1;
     }
@@ -273,20 +271,41 @@ public class Logic {
     /**
      * Gibt die Abweichungen der durch den Vektor und den Punkt gebildeten Winkel
      *
-     * @param v Vector
-     * @param p Punkt
+     * @param endvektor - Berechneter Endvektor des Algorithmus
+     * @param currentPos - Aktuelle Position der Biene
      * @return gibt die Abweichung zurueck
      */
-    public double abweichungBestimmen(Vector2D v, Point2D.Double p) {
-        double winkelVec = 90 - this.getWinkel(v) + 180;
-        double winkelPun = (90 - this.getWinkel(p)) + 180;
-        if ((p.x == 0 && p.y == 0) || winkelVec == 0 || winkelPun == 0) {
-            return 0;
-        } else {
+    public double abweichungBestimmen(Point2D.Double currentPos, Vector2D endvektor) {
+        Vector2D perfectVector = new Vector2D(0-currentPos.getX(), 0-currentPos.getY());
+        double winkelZwischenVektoren = winkelZwischenVektoren(endvektor,perfectVector);
 
-            return winkelPun - winkelVec;
+        System.out.println("winkelZwischenVektoren: "+winkelZwischenVektoren);
+        System.out.println();
 
-        }
+        return winkelZwischenVektoren;
+
+    }
+
+    public double winkelZwischenVektoren(Vector2D v1, Vector2D v2) {
+        double skalarProdukt = skalarProdukt(v1,v2);
+        double betragprodukt = vektorBetrag(v1) * vektorBetrag(v2);
+        double winkel = Math.acos(skalarProdukt/betragprodukt)*100;
+
+        double gerundetesErgebnis = Math.round(winkel*100.0)/100.0;
+
+        System.out.println("skalarProdukt: "+skalarProdukt+" / betragprodukt: "+betragprodukt);
+
+        if(gerundetesErgebnis > 180) gerundetesErgebnis = 360 - gerundetesErgebnis;
+
+        return gerundetesErgebnis;
+    }
+
+    private double vektorBetrag(Vector2D v) {
+        return Math.sqrt( Math.pow(v.getX(),2) +  Math.pow(v.getY(),2));
+    }
+
+    private double skalarProdukt(Vector2D v1, Vector2D v2) {
+        return v1.getX()*v2.getX()+v1.getY()*v2.getY();
     }
 
     /**
@@ -296,23 +315,10 @@ public class Logic {
      * @return gibt den Winkel zurueck
      */
     public double getWinkel(Vector2D p1) {
-        if (Double.isNaN(((Math.atan2(p1.getY(), p1.getX())) * 180) / Math.PI))
-            return 1;
-        else return (((Math.atan2(p1.getY(), p1.getX())) * 180) / Math.PI); //Umrechung ins Gradmaß
-
+        double ergebnis = (((Math.atan2(p1.getY(), p1.getX())) * 180) / Math.PI); //Umrechung ins Gradmaß
+        return Math.round(ergebnis * 100.0)/100.0;
     }
 
-
-    /**
-     * Berechnet den Winkel eines Punktes
-     *
-     * @param p1
-     * @return gibt den Winkel zurueck
-     */
-    public double getWinkel(Point2D.Double p1) {
-        double winkel = ((Math.atan2(p1.getY(), p1.getX())) * 180) / Math.PI; //Umrechung ins Gradmaß
-        return winkel;
-    }
 
     /**
      * Bestimmt einen Winkel zwischen zwei Vektoren
@@ -334,10 +340,22 @@ public class Logic {
      * @return Gibt den Mittelpunkt der schwarzen Flaeche zwischen p1 und p2 zurueck
      */
     public Point2D.Double mittelpunkt(Point2D.Double p1, Point2D.Double p2) {
-        double abstand = getAbstand(p1, p2);
+       /* double abstand = getLaenge(p1, p2);
         double laenge = laengenBestimmung(abstand);
         Vector2D vector = richtungsvektor(p1, p2);
-        return getPoint(vector, p1, laenge);
+        return getPoint(vector,p1,laenge); */
+
+        Vector2D normVektor = normVector(p2,p1);
+        return new Point2D.Double(normVektor.getX(),normVektor.getY());
+    }
+
+    public Vector2D normVector(Point2D.Double p1, Point2D.Double p2) {
+        Vector2D richtung = richtungsvektor(p1,p2);
+        return richtung.multiplikation(1/ getLaenge(p1,p2));
+    }
+
+    public Vector2D normVector(Vector2D v) {
+        return v.multiplikation(1/ getLaenge(v));
     }
 
     /**
