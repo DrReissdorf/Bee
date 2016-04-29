@@ -1,7 +1,7 @@
 import java.awt.geom.Point2D;
 
 public class Snapshot {
-    private Point2D.Double m1, m2, m3, m4, m5, m6;
+    private Punkt m1, m2, m3, m4, m5, m6;
 
     /**
      * @param m1 Mittelpunkt der ersten schwarzen Flaeche
@@ -11,7 +11,7 @@ public class Snapshot {
      * @param m5 Mittelpunkt der zweiten gruenen Flaeche
      * @param m6 Mittelpunkt der dritten gruenen Flaeche
      */
-    public Snapshot(Point2D.Double m1, Point2D.Double m2, Point2D.Double m3, Point2D.Double m4, Point2D.Double m5, Point2D.Double m6) {
+    public Snapshot(Punkt m1, Punkt m2, Punkt m3, Punkt m4, Punkt m5, Punkt m6) {
         this.m1 = m1;
         this.m2 = m2;
         this.m3 = m3;
@@ -20,53 +20,27 @@ public class Snapshot {
         this.m6 = m6;
     }
 
-    public Point2D.Double getM1() {
+    public Punkt getM1() {
         return m1;
     }
 
-    public void setM1(Point2D.Double m1) {
-        this.m1 = m1;
-    }
-
-    public Point2D.Double getM2() {
+    public Punkt getM2() {
         return m2;
     }
 
-    public void setM2(Point2D.Double m2) {
-        this.m2 = m2;
-    }
-
-    public Point2D.Double getM3() {
+    public Punkt getM3() {
         return m3;
     }
 
-    public void setM3(Point2D.Double m3) {
-        this.m3 = m3;
-    }
-
-    public Point2D.Double getM4() {
+    public Punkt getM4() {
         return m4;
     }
 
-    public void setM4(Point2D.Double m4) {
-        this.m4 = m4;
-    }
-
-    public Point2D.Double getM5() {
+    public Punkt getM5() {
         return m5;
     }
 
-    public void setM5(Point2D.Double m5) {
-        this.m5 = m5;
-    }
-
-    public Point2D.Double getM6() {
+    public Punkt getM6() {
         return m6;
     }
-
-    public void setM6(Point2D.Double m6) {
-        this.m6 = m6;
-    }
-
-
 }

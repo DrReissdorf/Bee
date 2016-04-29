@@ -7,13 +7,13 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form GUI
      **/
     public GUI() {
-        super("Homing Algorithm");
+        super("Biene Maja");
         this.setLocationRelativeTo(null);
 
         initComponents();
 
         setResizable(false);
-        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**

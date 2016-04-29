@@ -11,27 +11,27 @@ import static java.lang.System.in;
 
 public class CanvasGUI extends Canvas {
     private Point[] origPoints;
-    private Logic logic;
-    private Point2D.Double home;
-    private Point2D.Double LM1;
-    private Point2D.Double LM2;
-    private Point2D.Double LM3;
+    private Punkt home;
+    private Punkt LM1;
+    private Punkt LM2;
+    private Punkt LM3;
     private Snapshot snapHome;
     private Snapshot snap;
-    private Point2D.Double M1;
-    private Point2D.Double M2;
-    private Point2D.Double M3;
-    private Point2D.Double M4;
-    private Point2D.Double M5;
-    private Point2D.Double M6;
-    private Point2D.Double currentPos;
-    private Point2D.Double KP1;
-    private Point2D.Double KP2;
-    private Point2D.Double KP3;
-    private Point2D.Double KP4;
-    private Point2D.Double KP5;
-    private Point2D.Double KP6;
+    private Punkt M1;
+    private Punkt M2;
+    private Punkt M3;
+    private Punkt M4;
+    private Punkt M5;
+    private Punkt M6;
+    private Punkt currentPos;
+    private Punkt KP1;
+    private Punkt KP2;
+    private Punkt KP3;
+    private Punkt KP4;
+    private Punkt KP5;
+    private Punkt KP6;
     private double abweichungen;
+    private int numberOfArrows = -1;
 
     private String lm1_x;
     private String lm1_y;
@@ -41,26 +41,26 @@ public class CanvasGUI extends Canvas {
     private String lm3_y;
 
     CanvasGUI() {
-        logic = Logic.getInstance();
-        home = new Point2D.Double(0, 0);
-        LM1 = new Point2D.Double(3.5, 2);
-        LM2 = new Point2D.Double(3.5, -2);
-        LM3 = new Point2D.Double(0, -4);
+        home = new Punkt(0, 0);
+        LM1 = new Punkt(3.5, 2);
+        LM2 = new Punkt(3.5, -2);
+        LM3 = new Punkt(0.3, -4);
 
         //getInput();
 
-        Point2D.Double mittelPunktTemporary = logic.mittelpunkt(home, LM1);
-        M1 = new Point2D.Double(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
+        Punkt mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM1);
+        M1 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
 
-        mittelPunktTemporary = logic.mittelpunkt(home, LM2);
-        M2 = new Point2D.Double(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
+        //mittelPunktTemporary = logic.mittelpunkt(home, LM2);
+        mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM2);
+        M2 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
 
-        mittelPunktTemporary = logic.mittelpunkt(home, LM3);
-        M3 = new Point2D.Double(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
+        mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM3);
+        M3 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
 
-        M4 = logic.punktbestimmung(home, M1, M2, M3);
-        M5 = logic.punktbestimmung(home, M3, M2, M1);
-        M6 = logic.punktbestimmung(home, M1, M3, M2);
+        M4 = Operations.kreisZwischenSchnittpunkte(home, M1, M2);
+        M5 = Operations.kreisZwischenSchnittpunkte(home, M3, M2);
+        M6 = Operations.kreisZwischenSchnittpunkte(home, M1, M3);
 
         snapHome = new Snapshot(M1, M2, M3, M4, M5, M6);
 
@@ -89,23 +89,21 @@ public class CanvasGUI extends Canvas {
             lm3_y = br.readLine();
 
 
-            LM1 = new Point2D.Double(Double.valueOf(lm1_x), Double.valueOf(lm1_y));
-            LM2 = new Point2D.Double(Double.valueOf(lm2_x), Double.valueOf(lm2_y));
-            LM3 = new Point2D.Double(Double.valueOf(lm3_x), Double.valueOf(lm3_y));
+            LM1 = new Punkt(Double.valueOf(lm1_x), Double.valueOf(lm1_y));
+            LM2 = new Punkt(Double.valueOf(lm2_x), Double.valueOf(lm2_y));
+            LM3 = new Punkt(Double.valueOf(lm3_x), Double.valueOf(lm3_y));
         } catch (Exception e) {
 
         }
-
-
     }
 
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        int[] landmark1 = logic.getPosition(LM1);
-        int[] landmark2 = logic.getPosition(LM2);
-        int[] landmark3 = logic.getPosition(LM3);
+        int[] landmark1 = Operations.getPosition(LM1);
+        int[] landmark2 = Operations.getPosition(LM2);
+        int[] landmark3 = Operations.getPosition(LM3);
 
         g2d.setColor(new Color(102, 152, 248));
         g2d.fillOval(landmark1[0], landmark1[1], 17 * 2, 17 * 2);
@@ -114,68 +112,59 @@ public class CanvasGUI extends Canvas {
 
         for (int i = -7; i <= 7; i++) {
             for (int j = 7; j >= -7; j--) {
-                currentPos = new Point2D.Double(i, j);
+                numberOfArrows ++;
+                currentPos = new Punkt(i, j);
 
                 /********* SNAPSHOT SCHNITTPUNKTE BESTIMMEN **************/
-                Point2D.Double mittelPunktTemporary = logic.mittelpunkt(currentPos, LM1);
-                KP1 = new Point2D.Double(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
+                Punkt mittelPunktTemporary = Operations.kreisSchnittpunkt(currentPos, LM1);
+                KP1 = new Punkt(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
 
-                mittelPunktTemporary = logic.mittelpunkt(currentPos, LM2);
-                KP2 = new Point2D.Double(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
+                mittelPunktTemporary = Operations.kreisSchnittpunkt(currentPos, LM2);
+                KP2 = new Punkt(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
 
-                mittelPunktTemporary = logic.mittelpunkt(currentPos, LM3);
-                KP3 = new Point2D.Double(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
+                mittelPunktTemporary = Operations.kreisSchnittpunkt(currentPos, LM3);
+                KP3 = new Punkt(mittelPunktTemporary.getX(), mittelPunktTemporary.getY());
 
-                KP4 = logic.punktbestimmung(currentPos, KP1, KP2, KP3);
-                KP5 = logic.punktbestimmung(currentPos, KP2, KP3, KP1);
-                KP6 = logic.punktbestimmung(currentPos, KP1, KP3, KP2);
+                KP4 = Operations.kreisZwischenSchnittpunkte(currentPos, KP1, KP2);
+                KP5 = Operations.kreisZwischenSchnittpunkte(currentPos, KP2, KP3);
+                KP6 = Operations.kreisZwischenSchnittpunkte(currentPos, KP1, KP3);
 
                 snap = new Snapshot(KP1, KP2, KP3, KP4, KP5, KP6);
                 /***********************************************************/
 
-                Vector2D vectorgeringsterAbstand1 = logic.VectorAbstandzumnaechstenPunktSchwarz(logic.punktAddieren(snapHome.getM1(), currentPos), currentPos, snap);
-                Vector2D vectorgeringsterAbstand2 = logic.VectorAbstandzumnaechstenPunktSchwarz(logic.punktAddieren(snapHome.getM2(), currentPos), currentPos, snap);
-                Vector2D vectorgeringsterAbstand3 = logic.VectorAbstandzumnaechstenPunktSchwarz(logic.punktAddieren(snapHome.getM3(), currentPos), currentPos, snap);
+                Punkt geringsterAbstandSchnittPunkt1 = Operations.geringsterAbstandPunkt(M1,KP1,KP2,KP3);
+                Punkt geringsterAbstandSchnittPunkt2 = Operations.geringsterAbstandPunkt(M2,KP1,KP2,KP3);
+                Punkt geringsterAbstandSchnittPunkt3 = Operations.geringsterAbstandPunkt(M3,KP1,KP2,KP3);
+                Punkt geringsterAbstandSchnittPunkt4 = Operations.geringsterAbstandPunkt(M4,KP4,KP5,KP6);
+                Punkt geringsterAbstandSchnittPunkt5 = Operations.geringsterAbstandPunkt(M5,KP4,KP5,KP6);
+                Punkt geringsterAbstandSchnittPunkt6 = Operations.geringsterAbstandPunkt(M6,KP4,KP5,KP6);
 
-                Vector2D vectorgeringsterAbstand4 = logic.VectorAbstandzumnaechstenPunktWeiß(logic.punktAddieren(snapHome.getM4(), currentPos), currentPos, snap);
-                Vector2D vectorgeringsterAbstand5 = logic.VectorAbstandzumnaechstenPunktWeiß(logic.punktAddieren(snapHome.getM5(), currentPos), currentPos, snap);
-                Vector2D vectorgeringsterAbstand6 = logic.VectorAbstandzumnaechstenPunktWeiß(logic.punktAddieren(snapHome.getM6(), currentPos), currentPos, snap);
+                Vector2D turnVector1 = Operations.berechneTurnVector(currentPos,M1,geringsterAbstandSchnittPunkt1);
+                Vector2D turnVector2 = Operations.berechneTurnVector(currentPos,M2,geringsterAbstandSchnittPunkt2);
+                Vector2D turnVector3 = Operations.berechneTurnVector(currentPos,M3,geringsterAbstandSchnittPunkt3);
+                Vector2D turnVector4 = Operations.berechneTurnVector(currentPos,M4,geringsterAbstandSchnittPunkt4);
+                Vector2D turnVector5 = Operations.berechneTurnVector(currentPos,M5,geringsterAbstandSchnittPunkt5);
+                Vector2D turnVector6 = Operations.berechneTurnVector(currentPos,M6,geringsterAbstandSchnittPunkt6).multiplikation(-1);
+                Vector2D allTurnVectors = turnVector1.add(turnVector2).add(turnVector3).add(turnVector4).add(turnVector5).add(turnVector6);
 
-                Vector2D vector11 = getOrthogonalenRichtungsvektor(M1,snap,vectorgeringsterAbstand1);
-                Vector2D vector21 = getOrthogonalenRichtungsvektor(M2,snap,vectorgeringsterAbstand2);
-                Vector2D vector31 = getOrthogonalenRichtungsvektor(M3,snap,vectorgeringsterAbstand3);
-                Vector2D vector41 = getOrthogonalenRichtungsvektor(M4,snap,vectorgeringsterAbstand4);
-                Vector2D vector51 = getOrthogonalenRichtungsvektor(M5,snap,vectorgeringsterAbstand5);
-                Vector2D vector61 = getOrthogonalenRichtungsvektor(M6,snap,vectorgeringsterAbstand6);
+                Vector2D positionVector1 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt1);
+                Vector2D positionVector2 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt2);
+                Vector2D positionVector3 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt3);
+                Vector2D positionVector4 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt4);
+                Vector2D positionVector5 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt5);
+                Vector2D positionVector6 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt6);
 
-                double abstand1 = logic.getLaenge(home, LM1);
-                int vectorRichtung1 = logic.richtungDesVectors(abstand1, currentPos, this.AbstandzumnaechstenPunktLM(logic.punktAddieren(M1, currentPos), snap));
-                Vector2D vector12 = vectorgeringsterAbstand1.multiplikation(vectorRichtung1);
+                Vector2D allPositionsVector = positionVector1.add(positionVector2).add(positionVector3).add(positionVector4).add(positionVector5).add(positionVector6);
+                Vector2D endVektor = allPositionsVector.multiplikation(3).add(allTurnVectors);
 
-                double abstand2 = logic.getLaenge(home, LM2);
-                int vectorRichtung2 = logic.richtungDesVectors(abstand2, currentPos, this.AbstandzumnaechstenPunktLM(logic.punktAddieren(M2, currentPos), snap));
-                Vector2D vector22 = vectorgeringsterAbstand2.multiplikation(vectorRichtung2);
-
-                double abstand3 = logic.getLaenge(home, LM3);
-                int vectorRichtung3 = logic.richtungDesVectors(abstand3, currentPos, this.AbstandzumnaechstenPunktLM(logic.punktAddieren(M3, currentPos), snap));
-                Vector2D vector32 = vectorgeringsterAbstand3.multiplikation(vectorRichtung3);
-
-                Vector2D vector42 = getVektorGeringsterAbstand(snapHome.getM1(),snapHome.getM2(), snapHome.getM4(), vectorgeringsterAbstand4);
-                Vector2D vector52 = getVektorGeringsterAbstand(snapHome.getM2(),snapHome.getM3(), snapHome.getM5(), vectorgeringsterAbstand5);
-                Vector2D vector62 = getVektorGeringsterAbstand(snapHome.getM1(),snapHome.getM3(), snapHome.getM6(), vectorgeringsterAbstand6);
-
-                Vector2D richtungsvektor = logic.addVector(vector11, vector21, vector31, vector41, vector51, vector61);
-                Vector2D naeherungsvektor = logic.addVector(vector12, vector22, vector32, vector42, vector52, vector62);
-                Vector2D endvektor = logic.vectorenAddieren(naeherungsvektor, richtungsvektor);
-
-                abweichungen += logic.abweichungBestimmen(currentPos, endvektor);
-                int[] position = logic.getPosition(currentPos);
+                abweichungen += Operations.abweichungBestimmen(currentPos, endVektor);
+                int[] position = Operations.getPosition(currentPos);
 
                 origPoints = Pfeil.getInstance().points(position[0], position[1]); // Punkte zur Erzeugung des Shapes, position[0/1] sind Ausgangspunkt
                 Point[] retPoint = new Point[origPoints.length];
                 retPoint[0] = origPoints[0];
                 for (int k = 1; k < origPoints.length; k++) {
-                    retPoint[k] = Pfeil.getInstance().rotatePoint(origPoints[k], origPoints[0], 90 - logic.getWinkel(endvektor));//this.winkelberechnung(home, new Point2D.Double(i,j))); //origPoints[k]: Punkte die rotiert werden, origPoint[0]:Punkt um welchen rotiert wird, angleDeg: Winkel
+                    retPoint[k] = Pfeil.getInstance().rotatePoint(origPoints[k], origPoints[0], 90 - Operations.getWinkel(endVektor));//this.winkelberechnung(home, new Point2D.Double(i,j))); //origPoints[k]: Punkte die rotiert werden, origPoint[0]:Punkt um welchen rotiert wird, angleDeg: Winkel
                 }
 
                 if (i != 0 || j != 0) {
@@ -191,36 +180,6 @@ public class CanvasGUI extends Canvas {
 
         }
 
-        System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / 224 + " Grad");
-    }
-
-    private Vector2D getVektorGeringsterAbstand(Point2D.Double M1, Point2D.Double M2, Point2D.Double M3, Vector2D vectorgeringsterAbstand) {
-        if (logic.getLaenge(M1, M2) < logic.vergleichStreckeWeiß(logic.punktAddieren(M3, currentPos), snap)) {
-            return vectorgeringsterAbstand.multiplikation(-1);
-        } else return vectorgeringsterAbstand;
-    }
-
-    private Vector2D getOrthogonalenRichtungsvektor(Point2D.Double M, Snapshot snap, Vector2D vectorgeringsterAbstand) {
-        if (logic.getWinkel(logic.richtungsvektor(currentPos, M), logic.richtungsvektor(currentPos, logic.VectorAbstandzumnaechstenPunktSchwarz(M, currentPos, snap))) > 180) {
-            return logic.orthogonalerRichtungsvektor(vectorgeringsterAbstand);
-        } else return logic.orthogonalerRichtungsvektor(vectorgeringsterAbstand).multiplikation(-1);
-    }
-
-
-    /**
-     * Vergleicht den Punkt mit den ersten drei Punkten des Snaps
-     *
-     * @param p1
-     * @param s
-     * @return gibt das Landmark zurueck das den gerinsten Abstand zum Punkt hat
-     */
-    public Point2D.Double AbstandzumnaechstenPunktLM(Point2D.Double p1, Snapshot s) {
-        if (s.getM1().equals(logic.kleinsterAbstand(p1, s.getM1(), s.getM2(), s.getM3()))) {
-            return LM1;
-        }
-        if (s.getM2().equals(logic.kleinsterAbstand(p1, s.getM1(), s.getM2(), s.getM3()))) {
-            return LM2;
-        }
-        return LM3;
+        System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / numberOfArrows + " Grad"+" ");
     }
 }
