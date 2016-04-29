@@ -14,7 +14,7 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void initComponents() {
-        canvas1 = new Draw();
+        canvas1 = new Drawer();
         canvas1.setBackground(backgroundColor);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

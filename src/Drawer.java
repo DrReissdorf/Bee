@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 import static java.lang.System.in;
 
-public class Draw extends java.awt.Canvas {
+public class Drawer extends java.awt.Canvas {
     private final Color arrowColor = new Color(255, 255, 255);
     private final Color centerColor = new Color(255,0,0);
     private final Color landmarkColor = new Color(102, 152, 248);
@@ -28,13 +28,13 @@ public class Draw extends java.awt.Canvas {
     private double abweichungen;
     private int numberOfArrows = -1;
 
-    public Draw() {
+    public Drawer() {
         home = new Punkt(0, 0);
         LM1 = new Punkt(3.5, 2);
         LM2 = new Punkt(3.5, -2);
         LM3 = new Punkt(0.3, -4);
 
-        //getInput();
+        getInput();
 
         Punkt mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM1);
         M1 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
@@ -86,6 +86,7 @@ public class Draw extends java.awt.Canvas {
             LM3 = new Punkt(Double.valueOf(lm3_x), Double.valueOf(lm3_y));
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 
@@ -132,31 +133,7 @@ public class Draw extends java.awt.Canvas {
                 KP6 = Operations.kreisZwischenSchnittpunkte(currentPos, KP1, KP3);
                 /***********************************************************/
 
-                Punkt geringsterAbstandSchnittPunkt1 = Operations.geringsterAbstandPunkt(M1,KP1,KP2,KP3);
-                Punkt geringsterAbstandSchnittPunkt2 = Operations.geringsterAbstandPunkt(M2,KP1,KP2,KP3);
-                Punkt geringsterAbstandSchnittPunkt3 = Operations.geringsterAbstandPunkt(M3,KP1,KP2,KP3);
-                Punkt geringsterAbstandSchnittPunkt4 = Operations.geringsterAbstandPunkt(M4,KP4,KP5,KP6);
-                Punkt geringsterAbstandSchnittPunkt5 = Operations.geringsterAbstandPunkt(M5,KP4,KP5,KP6);
-                Punkt geringsterAbstandSchnittPunkt6 = Operations.geringsterAbstandPunkt(M6,KP4,KP5,KP6);
-
-                Vector2D turnVector1 = Operations.berechneTurnVector(currentPos,M1,geringsterAbstandSchnittPunkt1);
-                Vector2D turnVector2 = Operations.berechneTurnVector(currentPos,M2,geringsterAbstandSchnittPunkt2);
-                Vector2D turnVector3 = Operations.berechneTurnVector(currentPos,M3,geringsterAbstandSchnittPunkt3);
-                Vector2D turnVector4 = Operations.berechneTurnVector(currentPos,M4,geringsterAbstandSchnittPunkt4);
-                Vector2D turnVector5 = Operations.berechneTurnVector(currentPos,M5,geringsterAbstandSchnittPunkt5);
-                Vector2D turnVector6 = Operations.berechneTurnVector(currentPos,M6,geringsterAbstandSchnittPunkt6).multiplikation(-1);
-                Vector2D allTurnVectors = turnVector1.add(turnVector2).add(turnVector3).add(turnVector4).add(turnVector5).add(turnVector6);
-
-                Vector2D positionVector1 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt1);
-                Vector2D positionVector2 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt2);
-                Vector2D positionVector3 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt3);
-                Vector2D positionVector4 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt4);
-                Vector2D positionVector5 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt5);
-                Vector2D positionVector6 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt6);
-                Vector2D allPositionsVector = positionVector1.add(positionVector2).add(positionVector3).add(positionVector4).add(positionVector5).add(positionVector6);
-
-                Vector2D endVektor = allPositionsVector.multiplikation(3).add(allTurnVectors);
-
+                Vector2D endVektor = calculateEndVector(currentPos,KP1,KP2,KP3,KP4,KP5,KP6);
                 abweichungen += Operations.abweichungBestimmen(currentPos, endVektor);
                 realPosition = Operations.getRealPosition(currentPos);
 
@@ -180,5 +157,32 @@ public class Draw extends java.awt.Canvas {
         }
 
         System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / numberOfArrows + " Grad"+" ");
+    }
+
+    private Vector2D calculateEndVector(Punkt currentPos, Punkt KP1, Punkt KP2, Punkt KP3, Punkt KP4, Punkt KP5, Punkt KP6) {
+        Punkt geringsterAbstandSchnittPunkt1 = Operations.geringsterAbstandPunkt(M1,KP1,KP2,KP3);
+        Punkt geringsterAbstandSchnittPunkt2 = Operations.geringsterAbstandPunkt(M2,KP1,KP2,KP3);
+        Punkt geringsterAbstandSchnittPunkt3 = Operations.geringsterAbstandPunkt(M3,KP1,KP2,KP3);
+        Punkt geringsterAbstandSchnittPunkt4 = Operations.geringsterAbstandPunkt(M4,KP4,KP5,KP6);
+        Punkt geringsterAbstandSchnittPunkt5 = Operations.geringsterAbstandPunkt(M5,KP4,KP5,KP6);
+        Punkt geringsterAbstandSchnittPunkt6 = Operations.geringsterAbstandPunkt(M6,KP4,KP5,KP6);
+
+        Vector2D turnVector1 = Operations.berechneTurnVector(currentPos,M1,geringsterAbstandSchnittPunkt1);
+        Vector2D turnVector2 = Operations.berechneTurnVector(currentPos,M2,geringsterAbstandSchnittPunkt2);
+        Vector2D turnVector3 = Operations.berechneTurnVector(currentPos,M3,geringsterAbstandSchnittPunkt3);
+        Vector2D turnVector4 = Operations.berechneTurnVector(currentPos,M4,geringsterAbstandSchnittPunkt4);
+        Vector2D turnVector5 = Operations.berechneTurnVector(currentPos,M5,geringsterAbstandSchnittPunkt5);
+        Vector2D turnVector6 = Operations.berechneTurnVector(currentPos,M6,geringsterAbstandSchnittPunkt6).multiplikation(-1);
+        Vector2D allTurnVectors = turnVector1.add(turnVector2).add(turnVector3).add(turnVector4).add(turnVector5).add(turnVector6);
+
+        Vector2D positionVector1 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt1);
+        Vector2D positionVector2 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt2);
+        Vector2D positionVector3 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt3);
+        Vector2D positionVector4 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt4);
+        Vector2D positionVector5 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt5);
+        Vector2D positionVector6 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt6);
+        Vector2D allPositionsVector = positionVector1.add(positionVector2).add(positionVector3).add(positionVector4).add(positionVector5).add(positionVector6);
+
+        return allPositionsVector.multiplikation(3).add(allTurnVectors);
     }
 }
