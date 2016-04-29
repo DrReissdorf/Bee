@@ -12,7 +12,6 @@ public class Vector2D {
         this.y = to.getY()-from.getY();
     }
 
-
     public double getX() {
         return x;
     }
@@ -21,22 +20,10 @@ public class Vector2D {
         return y;
     }
 
-    /**
-     * Addiert den Vektor mit dem uebergebenen Vektor
-     *
-     * @param a
-     * @return gibt den addierten Vektor zurueck
-     */
     public Vector2D add(Vector2D a) {
         return new Vector2D(x+a.getX(),y+a.getY());
     }
 
-    /**
-     * Subtrahiert den Vektor mit dem uebergebenen Vektor
-     *
-     * @param a
-     * @return gibt den subtrahierten Vektor zurueck
-     */
     public Vector2D subtrahieren(Vector2D a) {
         return new Vector2D(x-a.getX(),y-a.getY());
     }
@@ -53,35 +40,16 @@ public class Vector2D {
         return gerundetesErgebnis;
     }
 
-    /**
-     * Berechnet das Skalarprodukt mit dem Vektor im Parameter
-     *
-     * @param a
-     * @return Gibt das Skalarprodukt zurueck
-     */
     public double skalar(Vector2D a) {
         return (a.x * x) + (a.y * y);
     }
 
-    /**
-     * Berechnet den Betrag des Vektors
-     *
-     * @return gibt den Betrag zurueck
-     */
     public double betrag() {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    /**
-     * @param wert
-     * @return Multipliziert alle Werte des Vektors mit dem Parameter
-     */
     public Vector2D multiplikation(double wert) {
         return new Vector2D(x*wert,y*wert);
-    }
-
-    public double abstand(Vector2D v) {
-        return subtrahieren(v).betrag();
     }
 
     public Vector2D normVector() {

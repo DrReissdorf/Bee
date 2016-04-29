@@ -9,25 +9,23 @@ public class Pfeil {
     private Pfeil() {}
 
     public static Pfeil getInstance() {
-        if (instance == null) {
-            instance = new Pfeil();
-        }
+        if (instance == null) instance = new Pfeil();
         return instance;
     }
 
     /**
-     * @param x
-     * @param y
+     * @param toDrawX
+     * @param toDrawY
      * @return PointArray mit allen Punkten des Polygons
      */
-    public Point[] points(int x, int y) {
+    public Point[] drawPoints(int toDrawX, int toDrawY) {
         Point[] originalpoint = new Point[6];
-        originalpoint[0] = new Point(x + 17, y + 22); // Zentrum
-        originalpoint[1] = new Point(x + 17, y + 13);
-        originalpoint[2] = new Point(x + 14, y + 13);
-        originalpoint[3] = new Point(x + 17, y + 8);
-        originalpoint[4] = new Point(x + 20, y + 13);
-        originalpoint[5] = new Point(x + 17, y + 13);
+        originalpoint[0] = new Point(toDrawX + 17, toDrawY + 22); // Zentrum
+        originalpoint[1] = new Point(toDrawX + 17, toDrawY + 13);
+        originalpoint[2] = new Point(toDrawX + 14, toDrawY + 13);
+        originalpoint[3] = new Point(toDrawX + 17, toDrawY + 8);
+        originalpoint[4] = new Point(toDrawX + 20, toDrawY + 13);
+        originalpoint[5] = new Point(toDrawX + 17, toDrawY + 13);
 
         return originalpoint;
     }

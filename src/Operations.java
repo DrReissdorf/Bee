@@ -15,7 +15,7 @@ public class Operations {
         return new Punkt(currentPosToSchnittpunktVektorNorm.getX(),currentPosToSchnittpunktVektorNorm.getY());
     }
 
-    public static int[] getPosition(Punkt p) {
+    public static int[] getRealPosition(Punkt p) {
         int a[] = new int[2];
         a[0] = (int) ((p.getX() + 7) * 34);
         a[1] = (int) ((p.getY() - 7) * -34);

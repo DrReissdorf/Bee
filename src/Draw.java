@@ -1,15 +1,18 @@
-import java.awt.Canvas;
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import static java.lang.System.in;
 
-public class CanvasGUI extends Canvas {
+public class Draw extends java.awt.Canvas {
+    private final Color arrowColor = new Color(255, 255, 255);
+    private final Color centerColor = new Color(255,0,0);
+    private final Color landmarkColor = new Color(102, 152, 248);
+
     private Point[] origPoints;
     private Punkt home;
     private Punkt LM1;
@@ -21,30 +24,17 @@ public class CanvasGUI extends Canvas {
     private Punkt M4;
     private Punkt M5;
     private Punkt M6;
-    private Punkt currentPos;
-    private Punkt KP1;
-    private Punkt KP2;
-    private Punkt KP3;
-    private Punkt KP4;
-    private Punkt KP5;
-    private Punkt KP6;
+
     private double abweichungen;
     private int numberOfArrows = -1;
 
-    private String lm1_x;
-    private String lm1_y;
-    private String lm2_x;
-    private String lm2_y;
-    private String lm3_x;
-    private String lm3_y;
-
-    CanvasGUI() {
+    public Draw() {
         home = new Punkt(0, 0);
         LM1 = new Punkt(3.5, 2);
         LM2 = new Punkt(3.5, -2);
         LM3 = new Punkt(0.3, -4);
 
-        getInput();
+        //getInput();
 
         Punkt mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM1);
         M1 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
@@ -63,7 +53,15 @@ public class CanvasGUI extends Canvas {
     }
 
     private void getInput() {
+        String lm1_x;
+        String lm1_y;
+        String lm2_x;
+        String lm2_y;
+        String lm3_x;
+        String lm3_y;
+
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
         try{
             System.out.println("LM1 x-Koordinate:");
             lm1_x = br.readLine();
@@ -83,12 +81,11 @@ public class CanvasGUI extends Canvas {
             System.out.println("LM3 y-Koordinate:");
             lm3_y = br.readLine();
 
-
             LM1 = new Punkt(Double.valueOf(lm1_x), Double.valueOf(lm1_y));
             LM2 = new Punkt(Double.valueOf(lm2_x), Double.valueOf(lm2_y));
             LM3 = new Punkt(Double.valueOf(lm3_x), Double.valueOf(lm3_y));
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -96,18 +93,28 @@ public class CanvasGUI extends Canvas {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        int[] landmark1 = Operations.getPosition(LM1);
-        int[] landmark2 = Operations.getPosition(LM2);
-        int[] landmark3 = Operations.getPosition(LM3);
+        int[] landmark1 = Operations.getRealPosition(LM1);
+        int[] landmark2 = Operations.getRealPosition(LM2);
+        int[] landmark3 = Operations.getRealPosition(LM3);
 
-        g2d.setColor(new Color(102, 152, 248));
+        int[] realPosition;
+
+        g2d.setColor(landmarkColor);
         g2d.fillOval(landmark1[0], landmark1[1], 17 * 2, 17 * 2);
         g2d.fillOval(landmark2[0], landmark2[1], 17 * 2, 17 * 2);
         g2d.fillOval(landmark3[0], landmark3[1], 17 * 2, 17 * 2);
 
+        Punkt currentPos;
+        Punkt KP1;
+        Punkt KP2;
+        Punkt KP3;
+        Punkt KP4;
+        Punkt KP5;
+        Punkt KP6;
+
         for (int i = -7; i <= 7; i++) {
             for (int j = 7; j >= -7; j--) {
-                numberOfArrows ++;
+                numberOfArrows++;
                 currentPos = new Punkt(i, j);
 
                 /********* SNAPSHOT SCHNITTPUNKTE BESTIMMEN **************/
@@ -146,31 +153,30 @@ public class CanvasGUI extends Canvas {
                 Vector2D positionVector4 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt4);
                 Vector2D positionVector5 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt5);
                 Vector2D positionVector6 = Operations.berechnePositionVector(currentPos,geringsterAbstandSchnittPunkt6);
-
                 Vector2D allPositionsVector = positionVector1.add(positionVector2).add(positionVector3).add(positionVector4).add(positionVector5).add(positionVector6);
+
                 Vector2D endVektor = allPositionsVector.multiplikation(3).add(allTurnVectors);
 
                 abweichungen += Operations.abweichungBestimmen(currentPos, endVektor);
-                int[] position = Operations.getPosition(currentPos);
+                realPosition = Operations.getRealPosition(currentPos);
 
-                origPoints = Pfeil.getInstance().points(position[0], position[1]); // Punkte zur Erzeugung des Shapes, position[0/1] sind Ausgangspunkt
+                origPoints = Pfeil.getInstance().drawPoints(realPosition[0], realPosition[1]); // Punkte zur Erzeugung des Shapes, position[0/1] sind Ausgangspunkt
                 Point[] retPoint = new Point[origPoints.length];
                 retPoint[0] = origPoints[0];
                 for (int k = 1; k < origPoints.length; k++) {
-                    retPoint[k] = Pfeil.getInstance().rotatePoint(origPoints[k], origPoints[0], 90 - Operations.getWinkel(endVektor));//this.winkelberechnung(home, new Point2D.Double(i,j))); //origPoints[k]: Punkte die rotiert werden, origPoint[0]:Punkt um welchen rotiert wird, angleDeg: Winkel
+                    retPoint[k] = Pfeil.getInstance().rotatePoint(origPoints[k], origPoints[0], 90 - Operations.getWinkel(endVektor));
                 }
 
                 if (i != 0 || j != 0) {
-                    g2d.setColor(new Color(0, 0, 0));
-                    g2d.draw(Pfeil.getInstance().rotateShape(retPoint));  // zeichnet das Shape
-                    g2d.fill(Pfeil.getInstance().rotateShape(retPoint));  // fuellt das Shape
-                } else { //Kreuz, dass bei 0/0 gezeichnet ist
-                    g2d.setColor(new Color(255, 0, 0));
-                    g2d.drawLine(position[0] + 13, position[1] + 13, position[0] + 21, position[1] + 21);
-                    g2d.drawLine(position[0] + 13, position[1] + 21, position[0] + 21, position[1] + 13);
+                    g2d.setColor(arrowColor);
+                    g2d.draw(Pfeil.getInstance().rotateShape(retPoint));
+                    g2d.fill(Pfeil.getInstance().rotateShape(retPoint));
+                } else { //Kreuz, das bei 0/0 gezeichnet ist
+                    g2d.setColor(centerColor);
+                    g2d.drawLine(realPosition[0] + 13, realPosition[1] + 13, realPosition[0] + 21, realPosition[1] + 21);
+                    g2d.drawLine(realPosition[0] + 13, realPosition[1] + 21, realPosition[0] + 21, realPosition[1] + 13);
                 }
             }
-
         }
 
         System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / numberOfArrows + " Grad"+" ");

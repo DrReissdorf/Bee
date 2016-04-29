@@ -14,8 +14,4 @@ public class Punkt {
     public double getY() {
         return y;
     }
-
-    public Vector2D toVector() {
-        return new Vector2D(x,y);
-    }
 }
