@@ -1,5 +1,3 @@
-import java.awt.geom.Point2D;
-
 public class Operations {
     public static Punkt kreisSchnittpunkt(Punkt from, Punkt to) {
         Vector2D richtung = new Vector2D(to.getX()-from.getX(),to.getY()-from.getY());

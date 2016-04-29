@@ -15,8 +15,6 @@ public class CanvasGUI extends Canvas {
     private Punkt LM1;
     private Punkt LM2;
     private Punkt LM3;
-    private Snapshot snapHome;
-    private Snapshot snap;
     private Punkt M1;
     private Punkt M2;
     private Punkt M3;
@@ -46,12 +44,11 @@ public class CanvasGUI extends Canvas {
         LM2 = new Punkt(3.5, -2);
         LM3 = new Punkt(0.3, -4);
 
-        //getInput();
+        getInput();
 
         Punkt mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM1);
         M1 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
 
-        //mittelPunktTemporary = logic.mittelpunkt(home, LM2);
         mittelPunktTemporary = Operations.kreisSchnittpunkt(home, LM2);
         M2 = new Punkt(mittelPunktTemporary.getX(),mittelPunktTemporary.getY());
 
@@ -61,8 +58,6 @@ public class CanvasGUI extends Canvas {
         M4 = Operations.kreisZwischenSchnittpunkte(home, M1, M2);
         M5 = Operations.kreisZwischenSchnittpunkte(home, M3, M2);
         M6 = Operations.kreisZwischenSchnittpunkte(home, M1, M3);
-
-        snapHome = new Snapshot(M1, M2, M3, M4, M5, M6);
 
         abweichungen = 0;
     }
@@ -128,8 +123,6 @@ public class CanvasGUI extends Canvas {
                 KP4 = Operations.kreisZwischenSchnittpunkte(currentPos, KP1, KP2);
                 KP5 = Operations.kreisZwischenSchnittpunkte(currentPos, KP2, KP3);
                 KP6 = Operations.kreisZwischenSchnittpunkte(currentPos, KP1, KP3);
-
-                snap = new Snapshot(KP1, KP2, KP3, KP4, KP5, KP6);
                 /***********************************************************/
 
                 Punkt geringsterAbstandSchnittPunkt1 = Operations.geringsterAbstandPunkt(M1,KP1,KP2,KP3);
