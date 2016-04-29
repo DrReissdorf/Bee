@@ -13,6 +13,7 @@ public class Drawer extends java.awt.Canvas {
     private final Color centerColor = new Color(255,0,0);
     private final Color landmarkColor = new Color(102, 152, 248);
 
+    private boolean wasDrawed = false;
     private Point[] origPoints;
     private Punkt home;
     private Punkt LM1;
@@ -156,7 +157,10 @@ public class Drawer extends java.awt.Canvas {
             }
         }
 
-        System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / numberOfArrows + " Grad"+" ");
+        if(!wasDrawed) {
+            wasDrawed = true;
+            System.out.println("Die Abweichung betraegt durchschnittlich " + abweichungen / numberOfArrows + " Grad"+" ");
+        }
     }
 
     private Vector2D calculateEndVector(Punkt currentPos, Punkt KP1, Punkt KP2, Punkt KP3, Punkt KP4, Punkt KP5, Punkt KP6) {
