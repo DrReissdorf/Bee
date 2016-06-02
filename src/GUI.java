@@ -4,7 +4,7 @@ import java.awt.Color;
 public class GUI extends javax.swing.JFrame {
     private final Color backgroundColor = new Color(63, 168, 0);
     public GUI() {
-        super("Biene Maja");
+        super("ATS Praktikum 1");
 
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
